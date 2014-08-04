@@ -6,7 +6,7 @@ dojo.require("dijit._WidgetBase");
 dojo.require("dojo.io.script");
 dojo.require("dojo.NodeList-manipulate");
 
-//TODO: pagination (e.g. view controls has more hits than shown by default...
+//TODO: pagination in the list of options (e.g. view has more items than shown by default...)
 
 dojo.declare(
 	'extlib.dijit.BootstrapPickerSelect2',
@@ -121,7 +121,7 @@ dojo.declare(
 	    			select2Options.width = this.listWidth;
 	    		}
 	    		
-	    		x$(this.forId)
+	    		x$(this.control)
 	    			.select2(select2Options);
 	    			
 	    	} else {
@@ -131,7 +131,7 @@ dojo.declare(
 	    		if (this.isNativeSelect) {
 	    			//code to execute if select2 is attached to a <select> element 
 	    			
-	    			var $select = x$(this.forId);
+	    			var $select = x$(this.control);
 	    			
 	    			if (this.placeHolder != null || this.allowClearing ) { 
 	    				
@@ -161,6 +161,7 @@ dojo.declare(
 	    },
 	    
 	    dataLoaded : function(data) {
+	    	//called when the remote data (list of options) is loaded
 	    	
 	    	var $select = x$(this.thisId);
 	    	
@@ -177,12 +178,13 @@ dojo.declare(
 				var val = entry['@value'];
 				
 				//check if we have labels or only values
-				if (_hasLabels == null) {
+				if (_hasLabels === null) {
 					_hasLabels = entry.hasOwnProperty('@label');
 				}
 				
 				var txt = entry[ ( _hasLabels ? '@label' : '@value' ) ];
 				
+				//create the option
 				$select.append(
 					$("<option>")
 						.attr('value',val)
@@ -190,17 +192,21 @@ dojo.declare(
 				)
 			});
 			
+			var controlValue = this.getControlValue(this.control);
+			this.controlValues = controlValue ? (this.msep ? controlValue.split(this.msep) : [controlValue]) : [];
+			if(this.trim) this.controlValues = dojo.map(this.controlValues,dojo.trim)
 			
-			if (this.currentValue.length > 0 ) {
-				$select.val(this.currentValue);		//select current value
-			}
+			this.controlValues = controlValue ? (this.msep ? controlValue.split(this.msep) : [controlValue]) : [];
+			if(this.trim) this.controlValues = dojo.map(this.controlValues,dojo.trim)
+			
+			$select.val(this.controlValues);		//select current value
 				
 			//setup the select2 picker
 			$select
 				.select2( this.getSelect2Options() )
-					.on("change", { forId : this.forId }, function(e) {		
-						//set value in target field on change
-						x$(e.data.forId).val(e.val);
+					.on("change", { control : this.control }, function(e) {		
+						//set value in target (hidden) field on change
+						x$(e.data.control).val(e.val);
 					});
 	    },
 	    
@@ -252,7 +258,22 @@ dojo.declare(
 	    	
 	    	return select2Options;
 	    	
-	    }
+	    }, 
+	    
+	    getControlValue : function(id) {
+        	var controlValue=null;
+        	var element = XSP.getElementById(id);
+  			if(XSP.hasDijit()){
+  				var djd = dijit.byId(id);
+  				if(djd) {
+  					controlValue = XSP.getDijitFieldValue(djd)
+  				}
+  			}
+  			if(controlValue==null && element && !element.disabled) {
+  				controlValue = XSP.getFieldValue(element);
+  			}
+  			return controlValue;
+          }
 	   
 	}
 );

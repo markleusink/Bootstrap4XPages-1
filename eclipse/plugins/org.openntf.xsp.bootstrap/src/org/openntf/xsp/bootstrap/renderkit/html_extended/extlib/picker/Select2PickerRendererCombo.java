@@ -70,7 +70,7 @@ public class Select2PickerRendererCombo extends FacesRendererEx {
 			HashMap<String, Object> params = new HashMap<String, Object>();
 
 			params.put("thisId",  id);		//if we name this paramater 'id', Dojo will use it to register the widget
-			params.put("forId", _for.getClientId(context));
+			params.put("control", _for.getClientId(context));
 			params.put("isNativeSelect", true);
 			params.put("useRemoteData", false);
 			params.put("placeHolder", picker.getPlaceHolder());

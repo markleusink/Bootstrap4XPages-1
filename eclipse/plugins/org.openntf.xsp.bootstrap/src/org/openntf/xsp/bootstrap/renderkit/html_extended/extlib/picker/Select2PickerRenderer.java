@@ -32,6 +32,7 @@ import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonGenerator;
 import com.ibm.commons.util.io.json.JsonJavaFactory;
+import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.xsp.component.UIInputEx;
 import com.ibm.xsp.component.UIViewRootEx;
 import com.ibm.xsp.extlib.renderkit.html_extended.FacesRendererEx;
@@ -83,11 +84,12 @@ public class Select2PickerRenderer extends FacesRendererEx {
 
     		//create the parameters to initialize a new select2 object
     		HashMap<String,Object> params = new HashMap<String,Object>();
-    	    		
+    				
             params.put("thisId",  id);		//if we name this paramater 'id', Dojo will use it to register the widget
-            params.put("forId", _for.getClientId(context));
-            params.put("currentValue", _for.getValueAsString() );		
+            params.put("control", _for.getClientId(context));
             params.put("allowMultiple", StringUtil.isNotEmpty(_for.getMultipleSeparator()) );
+            params.put("msep", _for.getMultipleSeparator() );
+            params.put("trim", _for.isMultipleTrim() );
             params.put("restUrl", picker.getUrl(context, null));		// rest service URL
             params.put("useRemoteData", picker.isUseRemoteData() );
            	params.put("placeHolder", picker.getPlaceHolder() );
