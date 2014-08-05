@@ -241,6 +241,11 @@ label.xspPickerSpan {
 	margin-top: 3px;
 }
 
+/*by default, XPages add a size="x" to all <select> tags (even when it's 1): Bootstrap contains CSS to target those. This is to fix the height of those controls*/
+select[size="1"] {
+	height: 34px;
+} 
+
 /***********************************************************************	
 	OneUI like specific styles used by XPages controls
 	-> Ideally, these classes should be renamed and the rendered adapted
